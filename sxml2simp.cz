@@ -1,0 +1,58 @@
+#!/usr/bin/chez-scheme --script
+
+;; function
+(define (atom? s)
+  (and (not (null? s))
+       (not (pair? s))))
+(define find-cdr
+  (lambda (l tg)
+    (cond
+      [(null? l) #f]
+      [(atom? l) #f]
+      [(atom? (car l))
+       (find-cdr (cdr l) tg)]
+      [(eq? tg (caar l))
+       l]
+      [else (find-cdr (cdr l) tg)])))
+(define find-item
+  (lambda (l tg)
+    (let ([found-cdr (find-cdr l tg)])
+      (and found-cdr (car found-cdr)))))
+
+(define whole->simp
+  (lambda (s)
+    (cond
+      [(null? s) '()]
+      [(atom? s) '()]
+      [(eq? s #f) '()]
+      [(pair? (car s))
+       (list (apply append (map whole->simp s)))]
+      [(eq? 'bookmark (car s))
+       (let* ([name (cadr (find-item s 'title))])
+         `(((bookmark) ,name)))]
+      [(eq? 'folder (car s))
+       (let* ([name-cdr (find-cdr s 'title)]
+              [name (cadar name-cdr)]
+              [items-cdr (cdr name-cdr)];sbfldr+bkmrk
+              )
+         `(((folder) ,name
+            ,(apply append (map whole->simp items-cdr)))))]
+      [else
+       '()])))
+
+;; config
+(load "config.ss")
+
+;; data
+(define d-sxml0
+  (with-input-from-file bm-sxml0
+    (lambda () (read))))
+(define d-simp0 (apply append (map whole->simp (find-item d-sxml0 'xbel))))
+
+;; print
+(with-output-to-file bm-simp0
+  (lambda ()
+    (pretty-print d-simp0))
+  '(truncate))
+
+;; close

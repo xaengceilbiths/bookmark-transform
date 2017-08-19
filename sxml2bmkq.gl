@@ -1,0 +1,23 @@
+#!/usr/bin/guile -s
+!#
+(import (sxml simple))
+
+;; config
+(load "config.ss")
+
+;; data
+(define d-sxml1 (with-input-from-file bm-sxml1
+                  (lambda () (read))))
+#|
+(define d-html1 (with-output-to-string
+                  (lambda ()
+                    (sxml->xml d-sxml1))))
+|#
+
+;; print
+
+(with-output-to-file bm-xml1
+  (lambda ()
+    (sxml->xml d-sxml1)))
+
+;; close

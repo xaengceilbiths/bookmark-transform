@@ -1,0 +1,17 @@
+(((bookmark 5) "de")
+  ((bookmark 3) "us")
+  ((bookmark 7) "fr")
+  ((folder 1)
+    "1"
+    (((folder 2) "2" (((folder 3) "3" ()))) ((folder 4) "4" ())))
+  ((folder 5) "5" ()))
+
+;; new
+(((6) "aaa")
+ ((7 6) "bbb")
+ ((8 6) "ccc")
+ ((9 7) "ddd")
+ ((10 2) "eee"))
+
+;; num that is strictly bigger than (10 3) 
+(16 4)

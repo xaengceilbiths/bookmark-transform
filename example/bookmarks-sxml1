@@ -1,0 +1,73 @@
+(*TOP*
+  (*PI* xml "version=\"1.0\" encoding=\"UTF-8\"")
+  (xbel
+    (@ (xmlns:mime
+         "http://www.freedesktop.org/standards/shared-mime-info")
+       (xmlns:kdepriv "http://www.kde.org/kdepriv")
+       (xmlns:bookmark
+         "http://www.freedesktop.org/standards/desktop-bookmarks")
+       (toolbar "yes") (folded "no") (dbusName "konqueror"))
+    "deleted" "deleted" "deleted"
+    (folder (@ (folded "yes")) (title "1")
+      (info
+        (metadata
+          (@ (owner "http://freedesktop.org"))
+          (bookmark:icon (@ (name "bookmark_folder")))))
+      (folder (@ (folded "yes")) (title "2")
+        (info
+          (metadata
+            (@ (owner "http://freedesktop.org"))
+            (bookmark:icon (@ (name "bookmark_folder")))))
+        (folder
+          (@ (folded "no"))
+          (title "3")
+          (info
+            (metadata
+              (@ (owner "http://freedesktop.org"))
+              (bookmark:icon (@ (name "bookmark_folder")))))
+          (bookmark
+            (@ (href "http://google.us"))
+            (title "us")
+            (info
+              (metadata
+                (@ (owner "http://freedesktop.org"))
+                (bookmark:icon (@ (name "www")))))))
+        (folder (@ (netscapeinfo "") (folded "no")) (title "eee")))
+      (folder
+        (@ (folded "no"))
+        (title "4")
+        (info
+          (metadata
+            (@ (owner "http://freedesktop.org"))
+            (bookmark:icon (@ (name "bookmark_folder")))))))
+    (folder
+      (@ (folded "no"))
+      (title "5")
+      (info
+        (metadata
+          (@ (owner "http://freedesktop.org"))
+          (bookmark:icon (@ (name "bookmark_folder")))))
+      (bookmark
+        (@ (href "http://google.de"))
+        (title "de")
+        (info
+          (metadata
+            (@ (owner "http://freedesktop.org"))
+            (bookmark:icon (@ (name "www")))))))
+    (folder
+      (@ (netscapeinfo "") (folded "no"))
+      (title "aaa")
+      (folder
+        (@ (netscapeinfo "") (folded "no"))
+        (title "bbb")
+        (folder (@ (netscapeinfo "") (folded "no")) (title "ddd"))
+        (bookmark
+          (@ (href "http://google.fr"))
+          (title "fr")
+          (info
+            (metadata
+              (@ (owner "http://freedesktop.org"))
+              (bookmark:icon (@ (name "www")))))))
+      (folder
+        (@ (netscapeinfo "") (folded "no"))
+        (title "ccc")))))

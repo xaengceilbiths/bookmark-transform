@@ -1,0 +1,19 @@
+#!/usr/bin/chez-scheme --script
+
+(library-directories "./chez-lib/")
+(import (sxml-test))
+
+;; config
+(load "config.ss")
+
+;; data
+(define d-sxml0 (ssax:xml->sxml (open-input-file bm-xml0) '()))
+
+;; print
+(with-output-to-file bm-sxml0
+  (lambda ()
+    (parameterize ([print-extended-identifiers #t]);chezscheme 9.4.1+ only
+      (pretty-print d-sxml0)))
+  '(truncate))
+
+;; close

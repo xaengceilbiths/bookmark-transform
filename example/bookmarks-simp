@@ -1,0 +1,7 @@
+(((bookmark) "de")
+  ((bookmark) "us")
+  ((bookmark) "fr")
+  ((folder)
+    "1"
+    (((folder) "2" (((folder) "3" ()))) ((folder) "4" ())))
+  ((folder) "5" ()))

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xbel>
+<xbel xmlns:kdepriv="http://www.kde.org/kdepriv" folded="no" xmlns:mime="http://www.freedesktop.org/standards/shared-mime-info" toolbar="yes" xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks" dbusName="konqueror">
+ <bookmark href="http://google.de">
+  <title>de</title>
+  <info>
+   <metadata owner="http://freedesktop.org">
+    <bookmark:icon name="www"/>
+   </metadata>
+  </info>
+ </bookmark>
+ <bookmark href="http://google.us">
+  <title>us</title>
+  <info>
+   <metadata owner="http://freedesktop.org">
+    <bookmark:icon name="www"/>
+   </metadata>
+  </info>
+ </bookmark>
+ <bookmark href="http://google.fr">
+  <title>fr</title>
+  <info>
+   <metadata owner="http://freedesktop.org">
+    <bookmark:icon name="www"/>
+   </metadata>
+  </info>
+ </bookmark>
+ <folder folded="yes">
+  <title>1</title>
+  <info>
+   <metadata owner="http://freedesktop.org">
+    <bookmark:icon name="bookmark_folder"/>
+   </metadata>
+  </info>
+  <folder folded="yes">
+   <title>2</title>
+   <info>
+    <metadata owner="http://freedesktop.org">
+     <bookmark:icon name="bookmark_folder"/>
+    </metadata>
+   </info>
+   <folder folded="no">
+    <title>3</title>
+    <info>
+     <metadata owner="http://freedesktop.org">
+      <bookmark:icon name="bookmark_folder"/>
+     </metadata>
+    </info>
+   </folder>
+  </folder>
+  <folder folded="no">
+   <title>4</title>
+   <info>
+    <metadata owner="http://freedesktop.org">
+     <bookmark:icon name="bookmark_folder"/>
+    </metadata>
+   </info>
+  </folder>
+ </folder>
+ <folder folded="no">
+  <title>5</title>
+  <info>
+   <metadata owner="http://freedesktop.org">
+    <bookmark:icon name="bookmark_folder"/>
+   </metadata>
+  </info>
+ </folder>
+</xbel>

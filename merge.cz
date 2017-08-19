@@ -1,0 +1,165 @@
+#!/usr/bin/chez-scheme --script
+
+(library-directories "./chez-lib/")
+(import (matchable))
+
+;; function
+(define (atom? s)
+  (and (not (null? s))
+       (not (pair? s))))
+(define find-cdr
+  (lambda (l tg)
+    (cond
+      [(null? l) #f]
+      [(atom? l) #f]
+      [(atom? (car l))
+       (find-cdr (cdr l) tg)]
+      [(eq? tg (caar l))
+       l]
+      [else (find-cdr (cdr l) tg)])))
+(define find-item
+  (lambda (l tg)
+    (let ([found-cdr (find-cdr l tg)])
+      (and found-cdr (car found-cdr)))))
+(define last-pair
+  (lambda (l)
+    (let ([d (cdr l)])
+      (if (null? d)
+          l
+          (last-pair d)))))
+(define add-sexp-to-fd
+  (lambda (i s)
+    (set-cdr! (vector-ref v-fd.lp i) (list s))
+    (vector-set! v-fd.lp i (cdr (vector-ref v-fd.lp i)))))
+(define add-fd-to-fd
+  (lambda (i j)
+    (set-cdr! (vector-ref v-fd.lp i) (list (vector-ref v-fd j)))
+    (vector-set! v-fd.lp i (cdr (vector-ref v-fd.lp i)))
+    (vector-set! v-fd.fd j i)))
+(define add-bm-to-fd
+  (lambda (i j)
+    (set-cdr! (vector-ref v-fd.lp i) (list (vector-ref v-bm j)))
+    (vector-set! v-fd.lp i (cdr (vector-ref v-fd.lp i)))
+    (vector-set! v-bm.fd j i)))
+
+(define ffind-cdr
+  (lambda (l f)
+    (cond
+      [(null? l) #f]
+      [else
+       (let ([a (car l)])
+         (if (f a)
+             l
+             (ffind-cdr (cdr l) f)))])))
+(define delete-bm
+  (lambda (i name)
+    (let* ([fdj (vector-ref v-bm.fd i)]
+           [fd (vector-ref v-fd fdj)])
+      (let ([to-delete
+             (ffind-cdr (find-cdr fd 'bookmark)
+                        (lambda (l)
+                          (and
+                           (pair? l)
+                           (eq? (car l) 'bookmark)
+                           (let ([name-l (find-item l 'title)])
+                             (equal? name-l `(title ,name))))))])
+        (when to-delete (set-car! to-delete "deleted"))))))
+
+(define fd-n 0)
+(define bm-n 0)
+(define whole-extract-vector
+  (lambda (s fd) ;fd -- folder of s, root is 0
+    (cond
+      [(null? s) (void)]
+      [(atom? s) (void)]
+      [(eq? s #f) (void)]
+      [(pair? (car s))
+       (for-each (lambda (s) (whole-extract-vector s fd)) s)]
+      [(eq? 'bookmark (car s))
+       (set! bm-n (+ 1 bm-n))
+       (vector-set! v-bm bm-n s)
+       (vector-set! v-bm.fd bm-n fd)]
+      [(eq? 'folder (car s))
+       (set! fd-n (+ 1 fd-n))
+       (vector-set! v-fd fd-n s)
+       (vector-set! v-fd.fd fd-n fd)
+       (vector-set! v-fd.lp fd-n (last-pair s))
+       (let ([items-cdr (cdr (find-cdr s 'title))])
+         (for-each (lambda (s) (whole-extract-vector s fd-n)) items-cdr))]
+      [else (void)])))
+(define make-new-fd
+  (lambda (fd-des)
+    (let* ([name (cadr fd-des)]
+           [father-l (cdar fd-des)]
+           [father
+            (if (null? father-l)
+                0
+                (car father-l))]
+           [i (caar fd-des)])
+      (let ([data
+             `(folder (@ (netscapeinfo "") (folded "no")) (title ,name))])
+        (vector-set! v-fd i data)
+        (vector-set! v-fd.lp i (last-pair data))
+        (add-fd-to-fd father i)))))
+
+(define modify
+  (lambda (s)
+    ;(lg s)
+    (match s
+      [`((bookmark) ,name)
+       (set! bm-n (+ 1 bm-n))]
+      [`((folder ,n) ,name)
+       (void)]
+      [`((folder ,n) ,name ,items)
+       (for-each modify items)]
+      [`((bookmark -1) ,name)
+       (set! bm-n (+ 1 bm-n))
+       (delete-bm bm-n name)]
+      [`((bookmark ,fd) ,name)
+       (set! bm-n (+ 1 bm-n))
+       (delete-bm bm-n name)
+       (add-bm-to-fd fd bm-n)])))
+
+;; config
+(load "config.ss")
+
+;; open input
+(define f-sxml0 (open-input-file bm-sxml0))
+(define f-simp1 (open-input-file bm-simp1))
+
+;; data
+(define d-sxml0 (read f-sxml0))
+(define d-simp1 (read f-simp1))
+(define new-folders (read f-simp1))
+(define fd-num 10) (define bm-num 100)
+(let ([nums (read f-simp1)])
+  (set! fd-n-max (car nums))
+  (set! bm-n-max (cadr nums)))
+
+;; process
+(define v-fd (make-vector fd-n-max))
+(define v-fd.fd (make-vector fd-n-max))
+(define v-fd.lp (make-vector fd-n-max)) ;last pair
+(define v-bm (make-vector bm-n-max))
+(define v-bm.fd (make-vector bm-n-max))
+
+(set! fd-n 0)
+(set! bm-n 0)
+(vector-set! v-fd 0 (find-item d-sxml0 'xbel))
+(vector-set! v-fd.lp 0 (last-pair (vector-ref v-fd 0)))
+(for-each (lambda (s) (whole-extract-vector s 0)) (vector-ref v-fd 0))
+(for-each make-new-fd new-folders)
+
+(set! bm-n 0)
+(for-each modify d-simp1)
+
+;; output
+(with-output-to-file bm-sxml1
+  (lambda ()
+    (parameterize ([print-extended-identifiers #t]);chezscheme 9.4.1+ only
+      (pretty-print d-sxml0)))
+  '(truncate))
+
+;; close
+(close-input-port f-sxml0)
+(close-input-port f-simp1)
