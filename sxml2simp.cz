@@ -21,6 +21,12 @@
 
 (define whole->simp
   (lambda (s)
+    (define (get-name title-cdr) ;;(title) may appear
+      (let ([d (cdr title-cdr)])
+        (cond
+         [(null? d) ""]
+         [(string? (car d)) (car d)]
+         [else (error 'get-name "invalid title-cdr")])))
     (cond
       [(null? s) '()]
       [(atom? s) '()]
@@ -28,11 +34,11 @@
       [(pair? (car s))
        (list (apply append (map whole->simp s)))]
       [(eq? 'bookmark (car s))
-       (let* ([name (cadr (find-item s 'title))])
+       (let* ([name (get-name (find-item s 'title))])
          `(((bookmark) ,name)))]
       [(eq? 'folder (car s))
        (let* ([name-cdr (find-cdr s 'title)]
-              [name (cadar name-cdr)]
+              [name (get-name (car name-cdr))]
               [items-cdr (cdr name-cdr)];sbfldr+bkmrk
               )
          `(((folder) ,name

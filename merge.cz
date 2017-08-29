@@ -62,7 +62,12 @@
                            (pair? l)
                            (eq? (car l) 'bookmark)
                            (let ([name-l (find-item l 'title)])
-                             (equal? name-l `(title ,name))))))])
+                             (define (name-l-equal? l0 l1)
+                               (and (equal? (car l0) (car l1))
+                                    (or (and (null? (cdr l0))
+                                             (string=? (cadr l1) ""))
+                                        (equal? (cadr l0) (cadr l1)))))
+                             (name-l-equal? name-l `(title ,name))))))])
         (when to-delete (set-car! to-delete "deleted"))))))
 
 (define fd-n 0)
